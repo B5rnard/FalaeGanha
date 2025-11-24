@@ -1,41 +1,47 @@
 // ============================================================================
-// SENTENCE CONFIGURATION - Update image URLs here
+// SENTENCE CONFIGURATION - Images are stored in /images folder
 // ============================================================================
-// Each sentence needs an image showing the scene described.
-// Replace the placeholder URLs with real images from Unsplash or other sources.
-// Recommended image size: 800x600px or similar landscape ratio
+// Each sentence uses a local image file from the /images folder.
+// Generate images using ImageFX and upload them to /images folder.
+// See IMAGES.md for detailed instructions on generating and uploading images.
+// Recommended image size: 800x600px or similar landscape ratio (PNG format)
 // ============================================================================
 
 const sentences = [
     {
         text: "O menino está comendo pizza",
         description: "O que está acontecendo?",
-        // IMAGE NEEDED: Young boy eating pizza, happy expression, casual setting
-        imageUrl: "https://via.placeholder.com/800x600/FF6B6B/FFFFFF?text=Menino+Comendo+Pizza"
+        // IMAGE: images/boy-eating-pizza.png
+        // Generate with ImageFX: Young boy eating pizza, happy expression, casual setting
+        imageUrl: "images/boy-eating-pizza.png"
     },
     {
         text: "A menina está bebendo suco",
         description: "O que está acontecendo?",
-        // IMAGE NEEDED: Young girl drinking juice from a glass or juice box
-        imageUrl: "https://via.placeholder.com/800x600/4ECDC4/FFFFFF?text=Menina+Bebendo+Suco"
+        // IMAGE: images/girl-drinking-juice.png
+        // Generate with ImageFX: Young girl drinking juice from a glass or juice box
+        imageUrl: "images/girl-drinking-juice.png"
     },
     {
         text: "O cachorro está correndo no parque",
         description: "O que está acontecendo?",
-        // IMAGE NEEDED: Dog running in a park, outdoor setting with grass/trees
-        imageUrl: "https://via.placeholder.com/800x600/95E1D3/FFFFFF?text=Cachorro+Correndo"
+        // IMAGE: images/dog-running-park.png
+        // Generate with ImageFX: Dog running in a park, outdoor setting with grass/trees
+        imageUrl: "images/dog-running-park.png"
     },
     {
         text: "O carro está na garagem",
         description: "Onde está o carro?",
-        // IMAGE NEEDED: Car parked inside a garage, clear garage setting
-        imageUrl: "https://via.placeholder.com/800x600/F38181/FFFFFF?text=Carro+na+Garagem"
+        // IMAGE: images/car-in-garage.png
+        // Generate with ImageFX: Car parked inside a garage, clear garage setting
+        imageUrl: "images/car-in-garage.png"
     },
     {
         text: "O livro está em cima da mesa",
         description: "Onde está o livro?",
-        // IMAGE NEEDED: Book on top of a table, clear view showing book and table surface
-        imageUrl: "https://via.placeholder.com/800x600/AA96DA/FFFFFF?text=Livro+na+Mesa"
+        // IMAGE: images/book-on-table.png
+        // Generate with ImageFX: Book on top of a table, clear view showing book and table surface
+        imageUrl: "images/book-on-table.png"
     }
 ];
 
