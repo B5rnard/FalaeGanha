@@ -100,8 +100,10 @@ function initGame() {
     gameState.stars = 0;
     gameState.attempts = 0;
     gameState.perfectRounds = 0;
+    gameState.journeyProgress = 0;
 
     showRound();
+    initJourneyMap();
 }
 
 function shuffleArray(array) {
@@ -219,6 +221,9 @@ function markCorrect() {
     showPointPopup(points, starEarned);
 
     document.getElementById('sentenceReveal').textContent = round.text;
+
+    // Update journey progress
+    updateJourneyProgress();
 
     setTimeout(() => {
         nextRound();
@@ -427,45 +432,6 @@ function createConfetti() {
             confetti.remove();
         }, 4000);
     }
-}
-
-// Update initGame to initialize journey map
-const originalInitGame = initGame;
-function initGame() {
-    originalInitGame();
-    gameState.journeyProgress = 0;
-    initJourneyMap();
-}
-
-// Update markCorrect to advance journey progress
-const originalMarkCorrect = markCorrect;
-function markCorrect() {
-    const round = gameState.rounds[gameState.currentRound];
-    let points = 0;
-    let starEarned = false;
-
-    if (gameState.attempts === 0) {
-        points = 100;
-        starEarned = true;
-        gameState.stars++;
-        gameState.perfectRounds++;
-    } else if (gameState.attempts === 1) {
-        points = 50;
-    } else {
-        points = 25;
-    }
-
-    gameState.score += points;
-    showPointPopup(points, starEarned);
-
-    document.getElementById('sentenceReveal').textContent = round.text;
-
-    // Update journey progress
-    updateJourneyProgress();
-
-    setTimeout(() => {
-        nextRound();
-    }, 2000);
 }
 
 // Handle window resize for character repositioning
