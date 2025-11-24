@@ -104,10 +104,54 @@ function initGame() {
 }
 
 function shuffleArray(array) {
+    // Initial Fisher-Yates shuffle
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+
+    // Check for consecutive duplicates and fix them
+    let maxAttempts = 100; // Prevent infinite loops
+    let attempts = 0;
+
+    while (hasConsecutiveDuplicates(array) && attempts < maxAttempts) {
+        attempts++;
+        // Find the first consecutive duplicate
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i].imageUrl === array[i + 1].imageUrl) {
+                // Try to swap with a non-adjacent element that won't create a new duplicate
+                let swapped = false;
+                for (let j = i + 2; j < array.length && !swapped; j++) {
+                    // Check if swapping would create a new consecutive duplicate
+                    const wouldCreateDuplicate =
+                        (j > 0 && array[j - 1].imageUrl === array[i + 1].imageUrl) ||
+                        (j < array.length - 1 && array[j + 1].imageUrl === array[i + 1].imageUrl);
+
+                    if (!wouldCreateDuplicate) {
+                        // Safe to swap
+                        [array[i + 1], array[j]] = [array[j], array[i + 1]];
+                        swapped = true;
+                    }
+                }
+
+                // If we couldn't find a good swap, do a random swap and try again
+                if (!swapped && i + 2 < array.length) {
+                    const randomIndex = Math.floor(Math.random() * (array.length - i - 2)) + i + 2;
+                    [array[i + 1], array[randomIndex]] = [array[randomIndex], array[i + 1]];
+                }
+                break;
+            }
+        }
+    }
+}
+
+function hasConsecutiveDuplicates(array) {
+    for (let i = 0; i < array.length - 1; i++) {
+        if (array[i].imageUrl === array[i + 1].imageUrl) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function showRound() {
