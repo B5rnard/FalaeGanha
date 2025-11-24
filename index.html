@@ -7,84 +7,74 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="game-layout">
-        <div class="main-content">
-            <div class="container">
-                <div class="game-header">
-                    <div class="score-board">
-                        <div class="score-item">
-                            <div class="score-label">Hoje</div>
-                            <div class="score-value" id="todayScore">0</div>
-                        </div>
-                        <div class="score-item">
-                            <div class="score-label">Total</div>
-                            <div class="score-value" id="totalScore">0</div>
-                        </div>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                        <div class="progress-percentage" id="progressPercentage">0%</div>
-                    </div>
+    <div class="container">
+        <div class="game-header">
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">Pontos</div>
+                    <div class="score-value" id="scoreDisplay">0</div>
                 </div>
-
-                <div class="game-card active" id="gameCard">
-
-                    <div class="image-container">
-                        <div class="image-loading" id="imageLoading">
-                            <div class="loading-spinner"></div>
-                            <div class="loading-text">Carregando...</div>
-                        </div>
-                        <img class="scene-image" id="sceneImage" src="https://via.placeholder.com/800x600/667eea/FFFFFF?text=FalaeGanha" alt="Cena do jogo">
-                        <div class="scene-description" id="sceneDescription"></div>
-                    </div>
-
-                    <div class="attempt-counter" id="attemptCounter"></div>
-                    <div class="sentence-reveal" id="sentenceReveal"></div>
-
-                    <div class="button-group">
-                        <button class="correct-btn" onclick="markCorrect()">✅ Correto</button>
-                        <button class="try-again-btn" onclick="tryAgain()">🔄 Tentar de Novo</button>
-                        <button class="skip-btn" onclick="skipRound()">⏭️ Pular</button>
-                    </div>
+                <div class="score-item">
+                    <div class="score-label">Estrelas</div>
+                    <div class="stars" id="starsDisplay">⭐ 0</div>
                 </div>
-
-                <div class="celebration" id="celebration">
-                    <div class="celebration-emoji">🎉🏆🎊</div>
-                    <h2>Jogo Completo!</h2>
-                    <div class="final-score" id="finalScore">0</div>
-                    <div class="rank" id="rankDisplay">Bronze</div>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-value" id="totalStars">0</div>
-                            <div class="stat-label">Total</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="perfectRounds">0</div>
-                            <div class="stat-label">Primeira Tentativa</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="avgPoints">0</div>
-                            <div class="stat-label">Média por Rodada</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="highScore">0</div>
-                            <div class="stat-label">Recorde Pessoal</div>
-                        </div>
-                    </div>
-                    <button class="play-again-btn" onclick="playAgain()">🎮 Jogar Novamente</button>
+                <div class="score-item">
+                    <div class="score-label">Rodada</div>
+                    <div class="score-value" id="roundDisplay">1/26</div>
                 </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
         </div>
 
-        <div class="journey-map" id="journeyMap">
-            <div class="journey-title">Sua Jornada</div>
-            <div class="journey-path" id="journeyPath">
-                <!-- Steps will be dynamically generated -->
+        <div class="game-card active" id="gameCard">
+            <div class="round-number">Rodada <span id="currentRound">1</span> de <span id="totalRounds">26</span></div>
+            
+            <div class="image-container">
+                <div class="image-loading" id="imageLoading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Carregando...</div>
+                </div>
+                <img class="scene-image" id="sceneImage" src="https://via.placeholder.com/800x600/667eea/FFFFFF?text=FalaeGanha" alt="Cena do jogo">
+                <div class="scene-description" id="sceneDescription"></div>
             </div>
-            <div class="journey-character" id="journeyCharacter">🏃</div>
+
+            <div class="attempt-counter" id="attemptCounter"></div>
+            <div class="sentence-reveal" id="sentenceReveal"></div>
+
+            <div class="button-group">
+                <button class="correct-btn" onclick="markCorrect()">✅ Correto</button>
+                <button class="try-again-btn" onclick="tryAgain()">🔄 Tentar de Novo</button>
+                <button class="skip-btn" onclick="skipRound()">⏭️ Pular</button>
+            </div>
         </div>
 
-        <div class="confetti-container" id="confettiContainer"></div>
+        <div class="celebration" id="celebration">
+            <div class="celebration-emoji">🎉🏆🎊</div>
+            <h2>Jogo Completo!</h2>
+            <div class="final-score" id="finalScore">0</div>
+            <div class="rank" id="rankDisplay">Bronze</div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalStars">0</div>
+                    <div class="stat-label">Estrelas</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="perfectRounds">0</div>
+                    <div class="stat-label">Primeira Tentativa</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="avgPoints">0</div>
+                    <div class="stat-label">Média por Rodada</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="highScore">0</div>
+                    <div class="stat-label">Recorde Pessoal</div>
+                </div>
+            </div>
+            <button class="play-again-btn" onclick="playAgain()">🎮 Jogar Novamente</button>
+        </div>
     </div>
 
     <script src="js/game.js"></script>
