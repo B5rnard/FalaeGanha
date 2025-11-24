@@ -77,8 +77,8 @@ const sentences = [
 let gameState = {
     rounds: [],
     currentRound: 0,
-    score: 0,
-    stars: 0,
+    todayScore: 0,
+    totalScore: 0,
     attempts: 0,
     perfectRounds: 0,
     totalRounds: 0,
@@ -96,11 +96,13 @@ function initGame() {
     shuffleArray(gameState.rounds);
     gameState.totalRounds = gameState.rounds.length;
     gameState.currentRound = 0;
-    gameState.score = 0;
-    gameState.stars = 0;
+    gameState.todayScore = 0;
     gameState.attempts = 0;
     gameState.perfectRounds = 0;
     gameState.journeyProgress = 0;
+
+    // Load total score from localStorage
+    gameState.totalScore = parseInt(localStorage.getItem('totalScore') || '0');
 
     showRound();
     initJourneyMap();
@@ -161,9 +163,6 @@ function showRound() {
     const round = gameState.rounds[gameState.currentRound];
     gameState.attempts = 0;
 
-    document.getElementById('currentRound').textContent = gameState.currentRound + 1;
-    document.getElementById('totalRounds').textContent = gameState.totalRounds;
-    document.getElementById('roundDisplay').textContent = `${gameState.currentRound + 1}/${gameState.totalRounds}`;
     document.getElementById('sceneDescription').textContent = round.description;
     document.getElementById('sentenceReveal').textContent = '';
     document.getElementById('attemptCounter').textContent = '';
@@ -209,7 +208,6 @@ function markCorrect() {
     if (gameState.attempts === 0) {
         points = 100;
         starEarned = true;
-        gameState.stars++;
         gameState.perfectRounds++;
     } else if (gameState.attempts === 1) {
         points = 50;
@@ -217,7 +215,8 @@ function markCorrect() {
         points = 25;
     }
 
-    gameState.score += points;
+    gameState.todayScore += points;
+    gameState.totalScore += points;
     showPointPopup(points, starEarned);
 
     document.getElementById('sentenceReveal').textContent = round.text;
@@ -262,31 +261,35 @@ function showPointPopup(points, star) {
 }
 
 function updateScore() {
-    document.getElementById('scoreDisplay').textContent = gameState.score;
-    document.getElementById('starsDisplay').textContent = `⭐ ${gameState.stars}`;
+    document.getElementById('todayScore').textContent = gameState.todayScore;
+    document.getElementById('totalScore').textContent = gameState.totalScore;
 
     const progress = ((gameState.currentRound) / gameState.totalRounds) * 100;
     document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
 }
 
 function endGame() {
     document.getElementById('gameCard').classList.remove('active');
     document.getElementById('celebration').classList.add('show');
 
-    document.getElementById('finalScore').textContent = gameState.score;
-    document.getElementById('totalStars').textContent = gameState.stars;
+    // Save total score to localStorage
+    localStorage.setItem('totalScore', gameState.totalScore);
+
+    document.getElementById('finalScore').textContent = gameState.todayScore;
+    document.getElementById('totalStars').textContent = gameState.totalScore;
     document.getElementById('perfectRounds').textContent = gameState.perfectRounds;
-    document.getElementById('avgPoints').textContent = Math.round(gameState.score / gameState.totalRounds);
+    document.getElementById('avgPoints').textContent = Math.round(gameState.todayScore / gameState.totalRounds);
 
     let rank = 'bronze';
     let rankText = 'Bronze';
-    if (gameState.score >= 2000) {
+    if (gameState.todayScore >= 2000) {
         rank = 'diamond';
         rankText = '💎 Diamante';
-    } else if (gameState.score >= 1500) {
+    } else if (gameState.todayScore >= 1500) {
         rank = 'gold';
         rankText = '🥇 Ouro';
-    } else if (gameState.score >= 1000) {
+    } else if (gameState.todayScore >= 1000) {
         rank = 'silver';
         rankText = '🥈 Prata';
     } else {
@@ -298,9 +301,9 @@ function endGame() {
     rankDisplay.className = `rank ${rank}`;
 
     const highScore = localStorage.getItem('highScore') || 0;
-    if (gameState.score > highScore) {
-        localStorage.setItem('highScore', gameState.score);
-        document.getElementById('highScore').textContent = gameState.score + ' 🆕';
+    if (gameState.todayScore > highScore) {
+        localStorage.setItem('highScore', gameState.todayScore);
+        document.getElementById('highScore').textContent = gameState.todayScore + ' 🆕';
     } else {
         document.getElementById('highScore').textContent = highScore;
     }
