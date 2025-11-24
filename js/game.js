@@ -1,9 +1,42 @@
+// ============================================================================
+// SENTENCE CONFIGURATION - Update image URLs here
+// ============================================================================
+// Each sentence needs an image showing the scene described.
+// Replace the placeholder URLs with real images from Unsplash or other sources.
+// Recommended image size: 800x600px or similar landscape ratio
+// ============================================================================
+
 const sentences = [
-    { text: "O menino está comendo pizza", emoji: "🍕👦", description: "O que está acontecendo?" },
-    { text: "A menina está bebendo suco", emoji: "🧃👧", description: "O que está acontecendo?" },
-    { text: "O cachorro está correndo no parque", emoji: "🐕🏃‍♂️🌳", description: "O que está acontecendo?" },
-    { text: "O carro está na garagem", emoji: "🚗🏠", description: "Onde está o carro?" },
-    { text: "O livro está em cima da mesa", emoji: "📚🪑", description: "Onde está o livro?" }
+    {
+        text: "O menino está comendo pizza",
+        description: "O que está acontecendo?",
+        // IMAGE NEEDED: Young boy eating pizza, happy expression, casual setting
+        imageUrl: "https://via.placeholder.com/800x600/FF6B6B/FFFFFF?text=Menino+Comendo+Pizza"
+    },
+    {
+        text: "A menina está bebendo suco",
+        description: "O que está acontecendo?",
+        // IMAGE NEEDED: Young girl drinking juice from a glass or juice box
+        imageUrl: "https://via.placeholder.com/800x600/4ECDC4/FFFFFF?text=Menina+Bebendo+Suco"
+    },
+    {
+        text: "O cachorro está correndo no parque",
+        description: "O que está acontecendo?",
+        // IMAGE NEEDED: Dog running in a park, outdoor setting with grass/trees
+        imageUrl: "https://via.placeholder.com/800x600/95E1D3/FFFFFF?text=Cachorro+Correndo"
+    },
+    {
+        text: "O carro está na garagem",
+        description: "Onde está o carro?",
+        // IMAGE NEEDED: Car parked inside a garage, clear garage setting
+        imageUrl: "https://via.placeholder.com/800x600/F38181/FFFFFF?text=Carro+na+Garagem"
+    },
+    {
+        text: "O livro está em cima da mesa",
+        description: "Onde está o livro?",
+        // IMAGE NEEDED: Book on top of a table, clear view showing book and table surface
+        imageUrl: "https://via.placeholder.com/800x600/AA96DA/FFFFFF?text=Livro+na+Mesa"
+    }
 ];
 
 let gameState = {
@@ -45,12 +78,41 @@ function showRound() {
 
     document.getElementById('currentRound').textContent = gameState.currentRound + 1;
     document.getElementById('roundDisplay').textContent = `${gameState.currentRound + 1}/25`;
-    document.getElementById('sceneEmoji').textContent = round.emoji;
     document.getElementById('sceneDescription').textContent = round.description;
     document.getElementById('sentenceReveal').textContent = '';
     document.getElementById('attemptCounter').textContent = '';
 
+    // Load and display the image
+    loadSceneImage(round.imageUrl);
+
     updateScore();
+}
+
+function loadSceneImage(imageUrl) {
+    const imageContainer = document.getElementById('sceneImage');
+    const loadingIndicator = document.getElementById('imageLoading');
+
+    // Show loading state
+    imageContainer.style.opacity = '0';
+    loadingIndicator.style.display = 'block';
+
+    // Create new image
+    const img = new Image();
+
+    img.onload = function() {
+        imageContainer.src = imageUrl;
+        imageContainer.style.opacity = '1';
+        loadingIndicator.style.display = 'none';
+    };
+
+    img.onerror = function() {
+        // If image fails to load, show a fallback
+        imageContainer.src = 'https://via.placeholder.com/800x600/CCCCCC/666666?text=Imagem+Indisponivel';
+        imageContainer.style.opacity = '1';
+        loadingIndicator.style.display = 'none';
+    };
+
+    img.src = imageUrl;
 }
 
 function markCorrect() {
