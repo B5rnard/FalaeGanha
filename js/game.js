@@ -3,7 +3,7 @@
 // ============================================================================
 // Each sentence uses a local image file from the /images folder.
 // All 13 images have been generated and uploaded to the /images folder.
-// The game repeats each sentence twice for a total of 26 rounds.
+// The game has 15 rounds: all 13 sentences appear once, plus 2 random sentences repeat.
 // ============================================================================
 
 const sentences = [
@@ -87,14 +87,29 @@ let gameState = {
 
 function initGame() {
     gameState.rounds = [];
-    // With 13 sentences, repeat each twice for 26 total rounds
-    for (let i = 0; i < 2; i++) {
-        for (let sentence of sentences) {
-            gameState.rounds.push({ ...sentence, completed: false });
-        }
+    // Add all 13 sentences once (13 rounds)
+    for (let sentence of sentences) {
+        gameState.rounds.push({ ...sentence, completed: false });
     }
+
+    // Randomly select 2 sentences to repeat (2 more rounds = 15 total)
+    const sentencesToRepeat = [];
+    const availableIndices = [...Array(sentences.length).keys()]; // [0, 1, 2, ..., 12]
+
+    // Select 2 random sentences to repeat
+    for (let i = 0; i < 2; i++) {
+        const randomIndex = Math.floor(Math.random() * availableIndices.length);
+        const sentenceIndex = availableIndices.splice(randomIndex, 1)[0];
+        sentencesToRepeat.push(sentences[sentenceIndex]);
+    }
+
+    // Add the 2 repeated sentences
+    for (let sentence of sentencesToRepeat) {
+        gameState.rounds.push({ ...sentence, completed: false });
+    }
+
     shuffleArray(gameState.rounds);
-    gameState.totalRounds = gameState.rounds.length;
+    gameState.totalRounds = gameState.rounds.length; // Should be 15
     gameState.currentRound = 0;
     gameState.todayScore = 0;
     gameState.attempts = 0;
@@ -323,9 +338,9 @@ function initJourneyMap() {
     const journeyPath = document.getElementById('journeyPath');
     journeyPath.innerHTML = '';
 
-    // Define milestone positions (every 5 steps, plus the finish)
-    const milestones = [5, 10, 15, 20, 26];
-    const milestoneIcons = ['🎯', '⭐', '🎪', '🎨', '🏆'];
+    // Define milestone positions for 15 rounds
+    const milestones = [5, 10, 15];
+    const milestoneIcons = ['🎯', '⭐', '🏆'];
 
     // Create steps from 1 to totalRounds
     for (let i = 1; i <= gameState.totalRounds; i++) {
