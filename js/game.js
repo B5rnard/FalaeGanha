@@ -1,78 +1,103 @@
 // ============================================================================
-// SENTENCE CONFIGURATION - Images are stored in /images folder
+// GAME CONFIGURATION
 // ============================================================================
-// Each sentence uses a local image file from the /images folder.
-// All 13 images have been generated and uploaded to the /images folder.
-// The game repeats each sentence twice for a total of 26 rounds.
+// Central configuration object for easy customization and scaling
 // ============================================================================
 
-const sentences = [
-    {
-        text: "O menino está comendo pizza",
-        description: "O que está acontecendo?",
-        imageUrl: "images/boy-eating-pizza.png"
-    },
-    {
-        text: "A menina está bebendo suco",
-        description: "O que está acontecendo?",
-        imageUrl: "images/girl-drinking-juice.jpeg"
-    },
-    {
-        text: "O cachorro está correndo no parque",
-        description: "O que está acontecendo?",
-        imageUrl: "images/dog-running-park.jpeg"
-    },
-    {
-        text: "O livro está em cima da mesa",
-        description: "Onde está o livro?",
-        imageUrl: "images/book-on-table.jpeg"
-    },
-    {
-        text: "O gato está no sofá",
-        description: "Onde está o gato?",
-        imageUrl: "images/cat-on-sofa.jpeg"
-    },
-    {
-        text: "A mochila está na cadeira",
-        description: "Onde está a mochila?",
-        imageUrl: "images/backpack-on-chair.jpeg"
-    },
-    {
-        text: "O menino está bebendo leite",
-        description: "O que está acontecendo?",
-        imageUrl: "images/boy-drinking-milk.jpeg"
-    },
-    {
-        text: "O menino está comendo hambúrguer",
-        description: "O que está acontecendo?",
-        imageUrl: "images/boy-eating-burger.jpeg"
-    },
-    {
-        text: "O menino está lendo um livro",
-        description: "O que está acontecendo?",
-        imageUrl: "images/boy-reading-book.jpeg"
-    },
-    {
-        text: "A menina está desenhando",
-        description: "O que está acontecendo?",
-        imageUrl: "images/girl-drawing-picture.jpeg"
-    },
-    {
-        text: "A menina está comendo maçã",
-        description: "O que está acontecendo?",
-        imageUrl: "images/girl-eating-apple.jpeg"
-    },
-    {
-        text: "A menina está jogando vôlei",
-        description: "O que está acontecendo?",
-        imageUrl: "images/girl-playing-volley.jpeg"
-    },
-    {
-        text: "O celular está carregando",
-        description: "O que está acontecendo?",
-        imageUrl: "images/phone-is-recharging.jpeg"
+const GAME_CONFIG = {
+    roundsPerSession: 15,              // Total rounds per session
+    selectedCategories: ['all'],        // Filter by: 'all', 'food-actions', 'object-locations', 'activities', 'daily-routines'
+    selectedDifficulty: ['all'],        // Filter by: 'all', 'easy', 'medium', 'hard'
+    repetitionsAllowed: true            // Allow sentences to appear multiple times per session
+};
+
+// ============================================================================
+// SENTENCE HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Get all enabled sentences from SENTENCE_DATA
+ * @returns {Array} Array of all enabled sentence objects
+ */
+function getAllSentences() {
+    return SENTENCE_DATA.filter(sentence => sentence.enabled);
+}
+
+/**
+ * Get sentences filtered by category
+ * @param {string|Array} category - Category name(s) or 'all'
+ * @returns {Array} Array of matching sentence objects
+ */
+function getSentencesByCategory(category) {
+    const allSentences = getAllSentences();
+
+    if (category === 'all' || (Array.isArray(category) && category.includes('all'))) {
+        return allSentences;
     }
-];
+
+    const categories = Array.isArray(category) ? category : [category];
+    return allSentences.filter(sentence => categories.includes(sentence.category));
+}
+
+/**
+ * Get sentences filtered by difficulty
+ * @param {string|Array} difficulty - Difficulty level(s) or 'all'
+ * @returns {Array} Array of matching sentence objects
+ */
+function getSentencesByDifficulty(difficulty) {
+    const allSentences = getAllSentences();
+
+    if (difficulty === 'all' || (Array.isArray(difficulty) && difficulty.includes('all'))) {
+        return allSentences;
+    }
+
+    const difficulties = Array.isArray(difficulty) ? difficulty : [difficulty];
+    return allSentences.filter(sentence => difficulties.includes(sentence.difficulty));
+}
+
+/**
+ * Get random selection of sentences based on filters
+ * @param {number} count - Number of sentences to return
+ * @param {Object} options - Filter options {category, difficulty}
+ * @returns {Array} Array of randomly selected sentence objects
+ */
+function getRandomSentences(count, options = {}) {
+    let sentences = getAllSentences();
+
+    // Apply category filter
+    if (options.category && options.category !== 'all') {
+        sentences = getSentencesByCategory(options.category);
+    }
+
+    // Apply difficulty filter
+    if (options.difficulty && options.difficulty !== 'all') {
+        sentences = sentences.filter(s =>
+            Array.isArray(options.difficulty)
+                ? options.difficulty.includes(s.difficulty)
+                : s.difficulty === options.difficulty
+        );
+    }
+
+    // If we need more sentences than available, allow repetitions
+    const result = [];
+    const available = [...sentences];
+
+    for (let i = 0; i < count; i++) {
+        if (available.length === 0) {
+            // Refill if we run out (allows repetitions)
+            available.push(...sentences);
+        }
+
+        const randomIndex = Math.floor(Math.random() * available.length);
+        result.push({...available[randomIndex]});
+
+        if (!GAME_CONFIG.repetitionsAllowed) {
+            available.splice(randomIndex, 1);
+        }
+    }
+
+    return result;
+}
 
 let gameState = {
     rounds: [],
@@ -87,12 +112,64 @@ let gameState = {
 
 function initGame() {
     gameState.rounds = [];
-    // With 13 sentences, repeat each twice for 26 total rounds
-    for (let i = 0; i < 2; i++) {
-        for (let sentence of sentences) {
+
+    // Get filtered sentences based on GAME_CONFIG
+    let availableSentences = getAllSentences();
+
+    // Apply category filter
+    if (!GAME_CONFIG.selectedCategories.includes('all')) {
+        availableSentences = getSentencesByCategory(GAME_CONFIG.selectedCategories);
+    }
+
+    // Apply difficulty filter
+    if (!GAME_CONFIG.selectedDifficulty.includes('all')) {
+        availableSentences = availableSentences.filter(s =>
+            GAME_CONFIG.selectedDifficulty.includes(s.difficulty)
+        );
+    }
+
+    // Generate rounds based on roundsPerSession
+    const roundsNeeded = GAME_CONFIG.roundsPerSession;
+    const sentenceCount = availableSentences.length;
+
+    if (roundsNeeded <= sentenceCount) {
+        // If we need fewer or equal rounds than available sentences
+        // Add all sentences once, then randomly select extras
+        for (let sentence of availableSentences) {
             gameState.rounds.push({ ...sentence, completed: false });
         }
+
+        // If we need fewer rounds, randomly remove some
+        while (gameState.rounds.length > roundsNeeded) {
+            const randomIndex = Math.floor(Math.random() * gameState.rounds.length);
+            gameState.rounds.splice(randomIndex, 1);
+        }
+
+        // If we need a few more, randomly select from available
+        const extrasNeeded = roundsNeeded - gameState.rounds.length;
+        if (extrasNeeded > 0) {
+            const sentencesToRepeat = [];
+            const availableIndices = [...Array(sentenceCount).keys()];
+
+            for (let i = 0; i < extrasNeeded; i++) {
+                const randomIndex = Math.floor(Math.random() * availableIndices.length);
+                const sentenceIndex = availableIndices.splice(randomIndex, 1)[0];
+                sentencesToRepeat.push(availableSentences[sentenceIndex]);
+            }
+
+            for (let sentence of sentencesToRepeat) {
+                gameState.rounds.push({ ...sentence, completed: false });
+            }
+        }
+    } else {
+        // If we need more rounds than available sentences
+        // Use getRandomSentences to fill with repetitions
+        gameState.rounds = getRandomSentences(roundsNeeded, {
+            category: GAME_CONFIG.selectedCategories,
+            difficulty: GAME_CONFIG.selectedDifficulty
+        }).map(s => ({ ...s, completed: false }));
     }
+
     shuffleArray(gameState.rounds);
     gameState.totalRounds = gameState.rounds.length;
     gameState.currentRound = 0;
@@ -323,9 +400,9 @@ function initJourneyMap() {
     const journeyPath = document.getElementById('journeyPath');
     journeyPath.innerHTML = '';
 
-    // Define milestone positions (every 5 steps, plus the finish)
-    const milestones = [5, 10, 15, 20, 26];
-    const milestoneIcons = ['🎯', '⭐', '🎪', '🎨', '🏆'];
+    // Define milestone positions for 15 rounds
+    const milestones = [5, 10, 15];
+    const milestoneIcons = ['🎯', '⭐', '🏆'];
 
     // Create steps from 1 to totalRounds
     for (let i = 1; i <= gameState.totalRounds; i++) {
